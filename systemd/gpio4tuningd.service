@@ -1,0 +1,17 @@
+[Unit]
+Description=GPIO4 carrier tuning TCP control server
+After=network-online.target zerotier-one.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+Group=root
+ExecStart=/usr/local/bin/gpio4tuningd --bind 127.0.0.1 --port 37357
+Restart=on-failure
+RestartSec=5
+KillSignal=SIGTERM
+TimeoutStopSec=2
+
+[Install]
+WantedBy=multi-user.target
