@@ -84,14 +84,37 @@ a modulált adás külön ellenőrzését.
 
 ## Telepítés Raspberry Pi-re
 
-A programot azon a Pi-n kell fordítani, amelyen a GPIO4-et használni fogja.
-A Pi-n szükséges a C++ fordító, a `make`, a `librpitx` fejléce és könyvtára,
-valamint a GPIO állapot lekérdezéséhez a `raspi-gpio`.
+A program fordítási függősége a **F5OEO `librpitx`** könyvtára:
+<https://github.com/F5OEO/librpitx>. Ebből használja a
+`librpitx/ngfmdmasync.h` fejlécet és a `librpitx` könyvtárat. A gpio4tuning
+nem tartalmazza és nem tölti le automatikusan ezt a külön projektet.
+
+A `make` és a `make install` előzetesen ellenőrzi, hogy a fejléc és a
+linkelhető könyvtár megvan-e. Alapértelmezett telepítési helyük:
+`/usr/local/include/librpitx/ngfmdmasync.h` és
+`/usr/local/lib/librpitx.a` (vagy `librpitx.so`). Más prefix a
+`LIBRPITX_PREFIX` változóval adható meg.
+
+Telepítés Raspberry Pi OS-en, a hivatalos `librpitx` buildleírását követve:
+
+```sh
+sudo apt install git build-essential
+git clone https://github.com/F5OEO/librpitx.git
+cd librpitx/src
+make
+sudo make install
+```
+
+Ezután a gpio4tuning repó könyvtárában:
 
 ```sh
 make
 sudo make install
 ```
+
+Ha a check hiányzó fejlécet vagy könyvtárat jelez, a `librpitx` fenti
+fordítását és telepítését kell befejezni. Egyedi prefix esetén mindkét
+parancsnak add át ugyanazt, például: `make LIBRPITX_PREFIX=/opt/librpitx`.
 
 A telepítés a `gpio4tuningd.service` systemd egységet telepíti, engedélyezi és
 elindítja. Alapértelmezés szerint a TCP szerver csak a helyi Pi-n
@@ -167,5 +190,6 @@ megszakíthat más, GPIO4-et használó programot is.
 ## Licenc és függőség
 
 A gpio4tuning saját forrása **GNU GPL-3.0-only** licencű; a teljes licenc a
-`LICENSE` fájlban található. A `librpitx` különálló függőség, amelyre annak
-saját licencfeltételei vonatkoznak.
+`LICENSE` fájlban található. A [F5OEO `librpitx` forrásrepo](https://github.com/F5OEO/librpitx)
+szintén GPL-3.0 licencet jelöl; a függőség külön projekt marad, saját
+forrásával és licencfájljával.

@@ -1,15 +1,28 @@
 CXX ?= g++
-CPPFLAGS += -I/usr/local/include
+LIBRPITX_PREFIX ?= /usr/local
+CPPFLAGS += -I$(LIBRPITX_PREFIX)/include
 CXXFLAGS ?= -O2 -Wall -Wextra -Wpedantic -std=c++11
-LDFLAGS += -L/usr/local/lib
+LDFLAGS += -L$(LIBRPITX_PREFIX)/lib
 LDLIBS += -lrpitx -lm -lrt -lpthread -lbcm_host
 
 TARGET := build/gpio4tuningd
 
-.PHONY: all clean install
+.PHONY: all check-librpitx clean install
 all: $(TARGET)
 
-$(TARGET): src/gpio4tuningd.cpp
+check-librpitx:
+	@test -r "$(LIBRPITX_PREFIX)/include/librpitx/ngfmdmasync.h" || { \
+		echo "Missing librpitx header: $(LIBRPITX_PREFIX)/include/librpitx/ngfmdmasync.h" >&2; \
+		echo "Install it from https://github.com/F5OEO/librpitx (see README.md)." >&2; \
+		exit 1; \
+	}
+	@test -r "$(LIBRPITX_PREFIX)/lib/librpitx.a" -o -r "$(LIBRPITX_PREFIX)/lib/librpitx.so" || { \
+		echo "Missing librpitx library: expected librpitx.a or librpitx.so under $(LIBRPITX_PREFIX)/lib" >&2; \
+		echo "Build and install librpitx from https://github.com/F5OEO/librpitx (see README.md)." >&2; \
+		exit 1; \
+	}
+
+$(TARGET): src/gpio4tuningd.cpp | check-librpitx
 	@mkdir -p build
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $< $(LDFLAGS) $(LDLIBS) -o $@
 
