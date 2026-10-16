@@ -1,4 +1,4 @@
-// Copyright (C) 2026 erixabo
+// Copyright (C) 2026 erixabo (Ar3v0d0z0R)
 // SPDX-License-Identifier: GPL-3.0-only
 
 #include <librpitx/ngfmdmasync.h>
